@@ -1,0 +1,9 @@
+# roles/base_fedora/defaults/main.yml
+---
+
+fedora_selinux_state: enforcing
+
+# Defaults for /etc/dnf/dnf.conf settings
+fedora_dnf_gpgcheck: 1
+fedora_dnf_installonly_limit: 3
+fedora_dnf_remove_dependencies: true

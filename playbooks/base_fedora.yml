@@ -1,0 +1,46 @@
+---
+#
+# Playbook to install Fedora with base packages
+#
+- hosts: all
+  remote_user: deployer
+  become: yes
+  become_user: roo
+  sudo: true
+  roles:
+    - fedora
+  vars:
+    fedora_firewall_allow_services:
+      - ssh
+    fedora_install_packages:
+      - vim-enhanced
+      - tree
+    fedora_remove_packages:
+      - nano
+    fedora_start_services:
+      - sshd
+    fedora_user_groups:
+      - xplex
+    fedora_users:
+      - name: deployer
+        comment: 'Deployer'
+        groups:
+          - xplex
+        password: ''
+      - name: dolftax
+        comment: 'Jai J'
+        groups:
+          - xplex
+        password: ''
+      - name: kaustavdm
+        comment: 'Kaustav Das Modak'
+        groups:
+          - xplex
+        password: ''
+      - name: debloper
+        comment: 'Soumya Deb'
+        groups:
+          - xplex
+        password: ''
+    fedora_dnf_gpgcheck: 0
+    fedora_dnf_installonly_limit: 2

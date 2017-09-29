@@ -1,0 +1,14 @@
+---
+#
+# Playbook to install the Elasticsearch and kibana
+#
+---
+- hosts: all
+  remote_user: deployer
+  become: yes
+  become_user: root
+  sudo: true
+  roles:
+    - java
+    - elasticsearch
+    - kibana

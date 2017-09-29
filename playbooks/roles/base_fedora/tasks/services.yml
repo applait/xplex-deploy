@@ -1,0 +1,24 @@
+# File: roles/base_fedora/tasks/services.yml
+# Make sure the necessary services are enabled
+---
+- name: Ensure specified services are running
+  service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  with_items: fedora_start_services
+  when: fedora_start_services is defined
+  tags:
+    - fedora
+    - services
+
+- name: Ensure specified services are NOT running
+  service:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  with_items: fedora_stop_services
+  when: fedora_stop_services is defined
+  tags:
+    - fedora
+    - services

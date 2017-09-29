@@ -1,0 +1,28 @@
+# roles/base_fedora/tasks/users.yml
+#
+# Create groups and users on the system
+---
+- name: Add groups
+  group:
+    name: "{{ item }}"
+    state: present
+  with_items: fedora_user_groups
+  when: fedora_user_groups is defined
+  tags:
+    - fedora
+    - users
+
+- name: Add users
+  user:
+    name: "{{ item.name }}"
+    state: present
+    comment: "{{ item.comment }}"
+    shell: "{{ item.shell|default('/bin/bash') }}"
+    createhome: yes
+    groups: "{{ ','.join(item.groups) }}"
+    password: "{{ item.password }}"
+  with_items: fedora_users
+  when: fedora_users is defined
+  tags:
+    - fedora
+    - users

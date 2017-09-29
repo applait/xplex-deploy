@@ -1,0 +1,59 @@
+# roles/base_fedora/tasks/security.yml
+#
+# Basic security settings
+---
+- name: "Ensure SELinux state is {{ fedora_selinux_state }}"
+  selinux:
+    policy: targeted
+    state: "{{ fedora_selinux_state }}"
+  tags:
+    - fedora
+    - security
+
+- name: Make sure the firewall is running
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+  tags:
+    - fedora
+    - security
+
+- name: Make sure basic services can pass through firewall
+  firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items:
+    - dhcpv6-client
+  notify:
+    - restart firewalld
+  tags:
+    - fedora
+    - security
+
+- name: Allow specified services to pass through firewall
+  firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items: fedora_firewall_allow_services
+  when: fedora_firewall_allow_services is defined
+  notify:
+    - restart firewalld
+  tags:
+    - fedora
+    - security
+
+- name: Allow specified ports to pass through firewall
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items: fedora_firewall_allow_ports
+  when: fedora_firewall_allow_ports is defined
+  notify:
+    - restart firewalld
+  tags:
+    - fedora
+    - security

@@ -1,0 +1,5 @@
+# roles/base_fedora/handlers/main.yml
+---
+
+- name: restart firewalld
+  service: name=firewalld state=restarted

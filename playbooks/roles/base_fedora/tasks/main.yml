@@ -1,0 +1,8 @@
+# roles/base_fedora/tasks/main.yml
+---
+
+- include: install.yml  # Install repositories and packages
+- include: services.yml # Start/stop basic services
+- include: security.yml # Security settings
+- include: admin.yml    # Admin user
+- include: users.yml    # Users and groups

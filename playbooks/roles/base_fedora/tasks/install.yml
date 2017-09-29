@@ -1,0 +1,78 @@
+# roles/base_fedora/tasks/install.yml
+#
+# Install custom repositories and packages. Repositories should be installed
+# using the RPM package. A list of URLs to the RPMs for these repositories
+# should be specified in group_vars or host_vars.
+---
+
+- name: Install customizable dnf.conf
+  template:
+    src: etc_dnf_dnf.conf.j2
+    dest: /etc/dnf/dnf.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - fedora
+    - install
+
+- name: Ensure specified external repositories are installed (rpm)
+  dnf:
+    name: "{{ item }}"
+    state: installed
+  with_items: fedora_repositories_rpm
+  when: fedora_repositories_rpm is defined
+  tags:
+    - fedora
+    - install
+
+- name: Ensure specified external repositories are installed (.repo)
+  get_url:
+    url: "{{ item }}"
+    dest: /etc/yum.repos.d/
+  with_items: fedora_repositories
+  when: fedora_repositories is defined
+  tags:
+    - fedora
+    - install
+
+- name: Ensure Ansible dependencies are installed
+  dnf:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - libselinux-python
+    - libsemanage-python
+  tags:
+    - fedora
+    - install
+
+- name: Ensure specified packages are installed
+  dnf:
+    name: "{{ item }}"
+    state: installed
+  with_items: fedora_install_packages
+  when: fedora_install_packages is defined
+  tags:
+    - fedora
+    - install
+
+- name: Install locally stored RPMs
+  dnf:
+    name: "{{ item }}"
+    state: installed
+  with_fileglob: fedora_install_rpms
+  when: fedora_install_rpms is defined
+  tags:
+    - fedora
+    - install
+
+- name: Ensure specified packages are NOT installed
+  dnf:
+    name: "{{ item }}"
+    state: absent
+  with_items: fedora_remove_packages
+  when: fedora_remove_packages is defined
+  tags:
+    - fedora
+    - install
